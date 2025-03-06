@@ -27,10 +27,13 @@ def load_facts():
     facts = {}
     with open("facts_per_day.txt", "r", encoding="utf-8") as f:
         for line in f:
-            parts = line.split(" — ")
+            parts = line.split(" — ", 1)  # Разделяем только на две части: число и факт
             if len(parts) == 2:
-                days_left = int(parts[0].strip())  # Количество оставшихся дней
-                fact = parts[1].strip()  # Факт
+                # Очищаем строку от текста (например, "дня", "лет"), чтобы оставить только число
+                days_left_str = parts[0].strip()
+                # Извлекаем только число из строки
+                days_left = int(''.join(filter(str.isdigit, days_left_str)))
+                fact = parts[1].strip()  # Факт (все после "—")
                 facts[days_left] = fact
     return facts
 

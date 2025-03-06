@@ -1,7 +1,6 @@
 import os
 import asyncio
 from datetime import date
-import re
 
 from aiogram import Bot
 
@@ -28,16 +27,15 @@ def load_facts():
     facts = {}
     with open("facts_per_day.txt", "r", encoding="utf-8") as f:
         for line in f:
-            parts = line.split(" — ", 1)  # Разделяем на две части: число и факт
+            # Разделяем строку на число и факт по первому пробелу
+            parts = line.strip().split(" ", 1)  # Разделяем на 2 части: число и факт
             if len(parts) == 2:
-                # Очищаем строку от текста, оставляя только число
-                days_left_str = parts[0].strip()
-                # Регулярное выражение для извлечения только чисел из строки
-                match = re.search(r'\d+', days_left_str)
-                if match:
-                    days_left = int(match.group())  # Извлекаем найденное число и преобразуем в int
-                    fact = parts[1].strip()  # Факт (все после "—")
+                try:
+                    days_left = int(parts[0])  # Преобразуем первое число в int
+                    fact = parts[1].strip()  # Факт (все после числа)
                     facts[days_left] = fact
+                except ValueError:
+                    continue  # Игнорируем строки, где нет числа в начале
     return facts
 
 # Функция отправки сообщения
